@@ -1,0 +1,1 @@
+export const BACKEND_BASE_URL = "http://IP:PORT";

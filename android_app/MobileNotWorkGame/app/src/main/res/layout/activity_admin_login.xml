@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.adminlogin.AdminLoginFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="-16dp">
+
+        <TextView
+            android:id="@+id/game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/nav_header_title"
+            android:layout_marginTop="30dp"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/title_admin_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/game_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:text="Admin Login" />
+
+        <EditText
+            android:id="@+id/admin_usernameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_admin_login"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="40dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:hint="Benutzername"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/admin_passwordEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/admin_usernameEditText"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:hint="Passwort"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/adin_login_fehler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/admin_passwordEditText"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#FF0000"
+            android:text="Die Eingabe war nicht erfolgreich!"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/admin_usernameEditText"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="134dp"
+            android:text="Zurück" />
+
+        <Button
+            android:id="@+id/continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/admin_usernameEditText"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="134dp"
+            android:layout_marginEnd="5dp"
+            android:text="anmelden" />
+
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

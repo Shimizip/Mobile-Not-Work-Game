@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="-16dp">
+
+        <TextView
+            android:id="@+id/game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/nav_header_title"
+            android:layout_marginTop="30dp"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/registration_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/game_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:text="Registrierung" />
+
+        <TextView
+            android:id="@+id/device_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/registration_page"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:text="Ermittelte GeräteID: " />
+
+        <RelativeLayout
+            android:id="@+id/check_boxes_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/device_id"
+            android:padding="16dp">
+
+            <!-- Privacy Policy CheckBox -->
+            <CheckBox
+                android:id="@+id/privacy_policy_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="30dp"
+                android:text="Ich akzeptiere die " />
+
+            <!-- Privacy Policy Link -->
+            <TextView
+                android:id="@+id/privacy_policy_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/privacy_policy_checkbox"
+                android:layout_alignBaseline="@id/privacy_policy_checkbox"
+                android:text="@string/privacy_policy_text"
+                android:textColor="#0645AD" />
+
+            <!-- Terms and Conditions CheckBox -->
+            <CheckBox
+                android:id="@+id/terms_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/privacy_policy_checkbox"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="15dp"
+                android:text="Ich akzeptiere die " />
+
+            <!-- Terms and Conditions Link -->
+            <TextView
+                android:id="@+id/terms_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/terms_checkbox"
+                android:layout_alignBaseline="@id/terms_checkbox"
+                android:text="@string/agb_text"
+                android:textColor="#0645AD" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/userBlockedMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/check_boxes_layout"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="15dp"
+            android:textColor="#FF0000"
+            android:text="Bitte alle Pflichtfelder auswählen!"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/exit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/check_boxes_layout"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="134dp"
+            android:text="Spiel verlassen" />
+
+        <Button
+            android:id="@+id/continue_button"
+            android:onClick="clickReaktionRegistrieung"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/check_boxes_layout"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="134dp"
+            android:layout_marginEnd="5dp"
+            android:text="weiter" />
+
+        <Button
+            android:id="@+id/admin_login_button"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/continue_button"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:text="Admin Login" />
+
+        <TextView
+            android:id="@+id/required_fields_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/check_boxes_layout"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="254dp"
+            android:text="Alle mit (*) markierten Felder sind Pflichtfelder!" />
+
+
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

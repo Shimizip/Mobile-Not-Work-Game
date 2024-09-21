@@ -1,0 +1,17 @@
+services:
+  db:
+    container_name: postgres
+    image: postgres:16.1
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: PASSWORD
+      POSTGRES_DB: syp-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+    postgres_data:
+

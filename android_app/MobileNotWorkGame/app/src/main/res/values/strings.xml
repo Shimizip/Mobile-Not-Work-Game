@@ -1,0 +1,48 @@
+<resources>
+    <string name="base_url">http://IP</string>
+    <string name="app_name">MobileNotWorkGame</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Mobile NotWorkGame</string>
+    <string name="nav_header_subtitle">Geräte-ID:</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_main">MainActivity</string>
+    <string name="menu_kartenansicht">Kartenansicht</string>
+    <string name="menu_adminlogin">AdminLogin</string>
+    <string name="menu_scoreboard">Scoreboard</string>
+    <string name="menu_topten">TopTen</string>
+    <string name="menu_einstellungen">Einstellungen</string>
+
+    <string name="activity_admin_login">AdminLogin</string>
+    <string name="activity_admin_oberfläche">AdminOberfläche</string>
+
+    <string name="period">Spielperiode: Nov/23</string>
+
+    <string name="tile_settings_page">Einstellungen</string>
+    <string name="tile_scoreboard">Scoreboard</string>
+    <string name="title_offline">Offline Modus</string>
+
+    <string name="agb_text"><a href="http://IP:PORT/legal">Nutzungsbedingungen (*)</a></string>
+    <string name="privacy_policy_text"><a href="http://IP:PORT/legal">Privacy Policy (*)</a></string>
+
+    <string name="offline_message">Es besteht keine Verbindung zum Server. Die folgenden Messwerte wurden zur späteren Synchronisation aufgezeichnet.</string>
+    <string name="tile_scoreboard_last_period">Scoreboard der letzten Spielperiode</string>
+    <string name="admin_area_title">Admin-Bereich</string>
+    <string name="btn_search">Suchen</string>
+    <string name="btn_confirm">Bestätigen</string>
+    <string name="msg_user_blocked">Ihre Geräte-ID wurde durch einen Administrator blockiert!\nSollten Sie der Meinung sein, dass es sich hierbei um einen Fehler handelt, wenden Sie sich bitte an den Herausgeber der App.</string>
+    <string name="title_activity_registrierung">RegistrierungActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>

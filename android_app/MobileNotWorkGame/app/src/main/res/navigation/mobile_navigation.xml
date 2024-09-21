@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_kartenansicht">
+
+    <fragment
+        android:id="@+id/nav_kartenansicht"
+        android:name="de.thk.syp.mobilenotworkgame.ui.kartenansicht.KartenansichtFragment"
+        android:label="@string/menu_kartenansicht"
+        tools:layout="@layout/fragment_kartenansicht" />
+
+    <fragment
+        android:id="@+id/nav_scoreboard"
+        android:name="de.thk.syp.mobilenotworkgame.ui.scoreboard.ScoreboardFragment"
+        android:label="@string/menu_scoreboard"
+        tools:layout="@layout/fragment_scoreboard" />
+    <fragment
+        android:id="@+id/nav_topten"
+        android:name="de.thk.syp.mobilenotworkgame.ui.topten.TopTenFragment"
+        android:label="@string/menu_topten" />
+    <fragment
+        android:id="@+id/nav_einstellungen"
+        android:name="de.thk.syp.mobilenotworkgame.ui.einstellungen.EinstellungenFragment"
+        android:label="@string/menu_einstellungen"
+        tools:layout="@layout/fragment_einstellungen" />
+</navigation>

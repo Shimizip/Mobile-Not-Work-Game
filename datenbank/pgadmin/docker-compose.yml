@@ -1,0 +1,20 @@
+services: 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin@admin
+      PGADMIN_CONFIG_SERVER_MODE: "False" #disables login screen (only for localhost deployment)
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False" #disables master password setup
+    ports:
+      - "127.0.0.1:80:80"
+    volumes:
+      - pgadmin_syp_data:/var/lib/pgadmin
+      - type: bind
+        source: ./db-server-conf/pgadmin-syp-config.json
+        target: /pgadmin4/servers.json
+
+volumes:
+    pgadmin_syp_data:

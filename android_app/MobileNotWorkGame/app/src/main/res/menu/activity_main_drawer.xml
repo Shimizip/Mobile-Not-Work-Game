@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_kartenansicht"
+            android:icon="@drawable/ic_baseline_map_24"
+            android:title="@string/menu_kartenansicht" />
+        <item
+            android:id="@+id/nav_scoreboard"
+            android:icon="@drawable/ic_baseline_scoreboard_24"
+            android:title="@string/menu_scoreboard" />
+        <item
+            android:id="@+id/nav_topten"
+            android:icon="@drawable/ic_baseline_sports_score_24"
+            android:title="@string/menu_topten" />
+        <item
+            android:id="@+id/nav_einstellungen"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/menu_einstellungen" />
+    </group>
+</menu>

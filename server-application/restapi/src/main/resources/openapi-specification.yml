@@ -1,0 +1,792 @@
+openapi: 3.0.3
+info:
+  title: Mobile NotWork Game REST API
+  version: "1.0"
+tags:
+  - name: SpielerRESTController
+    description: Operationen im Zusammenhang mit Spielern
+  - name: AdminRESTController
+    description: Operationen im Zusammenhang mit Administratoren
+  - name: MessungRESTController
+    description: Operationen im Zusammenhang mit Messungen
+  - name: SpielRESTController
+    description: Alle Operationen im Zusammenhang mit dem Spiel
+  - name: KarteRESTController
+    description: Operationen im Zusammenhang mit der Kartenansicht
+
+paths:
+  /spieler:
+    get:
+      summary: Gibt einen Spieler zu gegebener sid zurueck oder listet alle Spieler auf.
+      description: Gibt einen Spieler zu gegebener sid zurueck oder listet alle Spieler auf.
+      tags:
+        - SpielerRESTController
+      security:
+        - spielerTokenAuth: []
+      operationId: getSpieler
+      parameters:
+        - name: sid
+          in: query
+          description: Die Spieler ID
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Erfolgreiche Ermittlung der Spieler
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Spieler'
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /spieler/register:
+    post:
+      summary: Spieler registrieren
+      description: Registrierung eines Spielers gemaess LF02.
+      tags:
+        - SpielerRESTController
+      operationId: spielerRegistrieren
+      parameters:
+        - name: geraeteID
+          in: query
+          description: Die ID des Geraets, mit dem sich der Spieler registriert.
+          required: true
+          schema:
+            type: string
+        - name: einwilligungAGB
+          in: query
+          description: Zeigt an, ob der Spieler die AGBs akzeptiert hat.
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Erfolgreiche Registrierung
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Fehlgeschlagene Registrierung
+          content:
+            application/json:
+              schema:
+                type: string
+  /spieler/login:
+    post:
+      summary: Spieler authentifizieren und autorisieren
+      description: Authentifizierung und Autorisierung eines Spielers gemaess LF01.
+      operationId: spielerLogin
+      tags:
+        - SpielerRESTController
+      parameters:
+        - name: geraeteID
+          in: query
+          description: Die ID des Geraets, mit dem sich der Spieler registriert.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Erfolgreiche Authentifizierung und Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginReplyDaten'
+        '401':
+          description: Ungueltige Anmeldeinformationen
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Spieler blockiert
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /spieler/benutzername/{sid}:
+    get:
+      summary: Benutzernamen fuer Spieler ermitteln
+      description: Fuer eine gegebene sid den zugehoerigen Benutzernamen ermitteln
+      operationId: getBenutzername
+      tags:
+        - SpielerRESTController
+      parameters:
+        - name: sid
+          in: path
+          description: Die ID des Spielers.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Benutzername erfolgreich ermittelt
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /spieler/benutzername-aendern/{sid}:
+    post:
+      summary: Benutzernamen aendern
+      description: Aenderung des Benutzernamens gemaess LF06.
+      operationId: spielerBenutzernameAendern
+      tags:
+        - SpielerRESTController
+      security:
+        - spielerTokenAuth: []
+      parameters:
+        - name: sid
+          in: path
+          description: Die ID des Spielers, dessen Benutzername geaendert werden soll.
+          required: true
+          schema:
+            type: integer
+        - name: neuerBenutzername
+          in: query
+          description: Der neue Benutzername.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Erfolgreiche Aenderung des Benutzernamens
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "spieler123"
+        '400':
+          description: Fehlgeschlagene Aenderung des Benutzernamens
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Ungueltige Anfrage, fehlende oder ungueltige sid oder neuerBenutzername"
+        '401':
+          description: Nicht authentifiziert
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Authentifizierung fehlgeschlagen, bitte melden Sie sich erneut an."
+        '403':
+          description: Benutzername bereits vergeben
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Der gewuenschte Benutzername ist bereits vergeben, bitte waehlen Sie einen anderen."
+
+  /spieler/blockieren/{sid}:
+    post:
+      summary: Spieler blockieren
+      description: Blockieren eines Spielers gemaess LF19.
+      operationId: spielerBlockieren
+      tags:
+        - SpielerRESTController
+      security:
+        - adminTokenAuth: []
+
+      parameters:
+        - name: sid
+          in: path
+          description: Die ID des Spielers, der blockiert werden soll.
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: Spieler erfolgreich blockiert
+        '400':
+          description: Fehlgeschlagene Blockierung des Spielers
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          $ref: "#/components/responses/NotAuthenticated"
+
+  /spieler/freischalten/{sid}:
+    post:
+      summary: Spieler freischalten
+      description: Freischalten eines Spielers gemaess LF20.
+      operationId: spielerFreischalten
+      tags:
+        - SpielerRESTController
+      security:
+        - adminTokenAuth: []
+
+      parameters:
+        - name: sid
+          in: path
+          description: Die ID des Spielers, der freigeschaltet werden soll.
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: Spieler erfolgreich freigeschaltet
+        '400':
+          description: Fehlgeschlagene Freischaltung des Spielers
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          $ref: "#/components/responses/NotAuthenticated"
+
+  /admin/login:
+    post:
+      summary: Administrator authentifizieren und autorisieren
+      description: Authentifizierung und Autorisierung eines Administrators gemaess LF17.
+      operationId: adminLogin
+      tags:
+        - AdminRESTController
+      parameters:
+        - name: username
+          in: query
+          description: Der Benutzername des Administrators.
+          required: true
+          schema:
+            type: string
+
+        - name: passwort
+          in: query
+          description: Das Passwort des Administrators.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Erfolgreiche Authentifizierung und Autorisierung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginReplyDaten'
+        '401':
+          description: Ungueltige Anmeldeinformationen
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /messung:
+    post:
+      summary: Messung erfassen
+      description: Erfassen einer Messung gemaess LF08.
+      operationId: messungErfassen
+      tags:
+        - MessungRESTController
+      security:
+        - spielerTokenAuth: []
+
+      parameters:
+        - name: sid
+          in: query
+          description: Die ID des Spielers, fuer den die Messung erfasst wird.
+          required: true
+          schema:
+            type: integer
+        - name: ksid
+          in: query
+          description: Die Kartensegment ID.
+          required: true
+          schema:
+            type: integer
+        - name: mfid
+          in: query
+          description: Die Mobilfunkanbieter ID.
+          required: true
+          schema:
+            type: integer
+        - name: msid
+          in: query
+          description: Die Mobilfukstandard ID.
+          required: true
+          schema:
+            type: integer
+        - name: rssi
+          in: query
+          description: Der Received Signal Strength Indicator (RSSI).
+          required: true
+          schema:
+            type: integer
+        - name: rtt
+          in: query
+          description: Die Round-Trip Time (RTT).
+          required: true
+          schema:
+            type: integer
+        - name: snr
+          in: query
+          description: Das Signal-to-Noise Ratio (SNR).
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Messung erfolgreich erfasst
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessungReply'
+        '400':
+          description: Fehlgeschlagene Erfassung der Messung
+        '404':
+          description: Messung konnte keinem Kartensegment zugeordnet werden
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+
+  /spiel/scoreboard:
+    get:
+      summary: Scoreboard anzeigen
+      description: Anzeigen des Scoreboards gemaess LF15.
+      operationId: getScoreboard
+      tags:
+        - SpielRESTController
+      security:
+        - spielerTokenAuth: []
+        - adminTokenAuth: []
+
+      parameters:
+        - name: spid
+          in: query
+          description: Die ID der Spielperiode, für die das Scoreboard angezeigt werden soll. Wenn keine angegeben ist, wird das Scoreboard der Aktuellsten zurückgegeben.
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: Scoreboard erfolgreich abgerufen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScoreboardItem'
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /spiel/spielperiode:
+    get:
+      summary: Spielperioden auflisten
+      description: Listet alle Spielperioden und deren IDs auf
+      operationId: getSpielperiode
+      tags:
+        - SpielRESTController
+      security:
+        - spielerTokenAuth: []
+        - adminTokenAuth: []
+      parameters:
+        - name: date
+          in: query
+          description: Gibt für das Datum die Spielperiode zurück.
+          required: false
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Spielperioden erfolgreich abgerufen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Spielperiode'
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /karte/get-ksid-fuer-standort:
+    get:
+      summary: ermittelt fuer gegebene Koordinaten die Kartensegment ID
+      description: ermittelt fuer gegebene Koordinaten die Kartensegment ID
+      operationId: getKsidFuerStandort
+      tags:
+        - KarteRESTController
+      security:
+        - spielerTokenAuth: []
+
+      parameters:
+        - name: Lat
+          in: query
+          description: Latitude des Standorts
+          required: true
+          schema:
+            type: number
+        - name: Lon
+          in: query
+          description: Longitude des Standorts
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Kartensegment wurde ermittelt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsidFuerStandort'
+        '400':
+          description: Ungueltige Anfrage
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /karte/get-kartenbereich-daten/spieler-ansicht:
+    get:
+      summary: Kartensegmente inkl. Messungen fuer gegebenen Bereich fuer die Sicht des Spielers ermitteln
+      description: Ermitteln der Kartensegmente inkl. Messungen fuer die Kartenansicht in einem bestimmten Bereich fuer die Ansicht des Spielers.
+      operationId: getKartenbereichDatenFuerSpieler
+      tags:
+        - KarteRESTController
+      security:
+        - spielerTokenAuth: []
+
+      parameters:
+        - name: linksObenLat
+          in: query
+          description: Latitude des linken oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: linksObenLon
+          in: query
+          description: Longitude des linken oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsObenLat
+          in: query
+          description: Latitude des rechten oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsObenLon
+          in: query
+          description: Longitude des rechten oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsUntenLat
+          in: query
+          description: Latitude des rechten unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsUntenLon
+          in: query
+          description: Longitude des rechten unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: linksUntenLat
+          in: query
+          description: Latitude des linken unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: linksUntenLon
+          in: query
+          description: Longitude des linken unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: filter
+          in: query
+          description: Filter fuer die Karte
+          required: true
+          schema:
+            type: string
+        - name: filterValue
+          in: query
+          description: FilterValue fuer die Karte
+          required: true
+          schema:
+            type: integer
+        - name: sid
+          in: query
+          description: ID des Spielers
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Messungen und Kartensegmente erfolgreich ermittelt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KartenbereichDatenfuerSpieler'
+        '400':
+          description: Ungueltige Anfrage
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /karte/get-kartenbereich-daten/admin-ansicht:
+    get:
+      summary: Kartensegmente inkl. Messungen fuer gegebenen Bereich fuer die Sicht des Administrators ermitteln
+      description: Ermitteln der Kartensegmente inkl. Messungen fuer die Kartenansicht in einem bestimmten Bereich fuer die Ansicht des Administrators.
+      operationId: getKartenbereichDatenFuerAdmin
+      tags:
+        - KarteRESTController
+      security:
+        - adminTokenAuth: []
+
+      parameters:
+        - name: linksObenLat
+          in: query
+          description: Latitude des linken oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: linksObenLon
+          in: query
+          description: Longitude des linken oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsObenLat
+          in: query
+          description: Latitude des rechten oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsObenLon
+          in: query
+          description: Longitude des rechten oberen Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsUntenLat
+          in: query
+          description: Latitude des rechten unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: rechtsUntenLon
+          in: query
+          description: Longitude des rechten unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: linksUntenLat
+          in: query
+          description: Latitude des linken unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: linksUntenLon
+          in: query
+          description: Longitude des linken unteren Punktes des anzuzeigenden Bereichs.
+          required: true
+          schema:
+            type: number
+        - name: filter
+          in: query
+          description: Filter fuer die Karte
+          required: true
+          schema:
+            type: string
+        - name: filterValue
+          in: query
+          description: FilterValue fuer die Karte
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Messungen und Kartensegmente erfolgreich ermittelt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KartenbereichDatenfuerAdmin'
+        '400':
+          description: Ungueltige Anfrage
+        '401':
+          $ref: '#/components/responses/NotAuthenticated'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    LoginReplyDaten:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        token:
+          type: string
+    Spieler:
+      type: object
+      properties:
+        sid:
+          type: integer
+          format: int32
+        benutzername:
+          type: string
+        geraeteid:
+          type: string
+        einwilligungagb:
+          type: boolean
+    ScoreboardItem:
+      type: object
+      properties:
+        scid:
+          type: integer
+          format: int32
+        summepunkte:
+          type: integer
+          format: int32
+        spid:
+          type: integer
+          format: int32
+        spielerName:
+          type: string
+        sid:
+          type: integer
+          format: int32
+    MessungReply:
+      type: object
+      properties:
+        punkte:
+          type: integer
+          format: int32
+    Spielperiode:
+      type: object
+      properties:
+        spid:
+          type: integer
+          format: int32
+        vondatum:
+          type: string
+          format: date
+        bisdatum:
+          type: string
+          format: date
+    MapHexagonCorner:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+    MapHexagon:
+      type: object
+      properties:
+        punkt1:
+          $ref: '#/components/schemas/MapHexagonCorner'
+        punkt2:
+          $ref: '#/components/schemas/MapHexagonCorner'
+        punkt3:
+          $ref: '#/components/schemas/MapHexagonCorner'
+        punkt4:
+          $ref: '#/components/schemas/MapHexagonCorner'
+        punkt5:
+          $ref: '#/components/schemas/MapHexagonCorner'
+        punkt6:
+          $ref: '#/components/schemas/MapHexagonCorner'
+    KartenbereichDatenfuerSpieler:
+      type: object
+      properties:
+        ksid:
+          type: integer
+        punkte:
+          $ref: '#/components/schemas/MapHexagon'
+        mobilfunkstandardAsString:
+          type: string
+        mobilfunkanbieterAsString:
+          type: string
+        rssi:
+          type: integer
+        rtt:
+          type: integer
+        snr:
+          type: integer
+        erreichtePunkte:
+          type: integer
+    KartenbereichDatenfuerAdmin:
+      type: object
+      properties:
+        ksid:
+          type: integer
+          format: int32
+        punkte:
+          $ref: '#/components/schemas/MapHexagon'
+        mobilfunkstandardAsString:
+          type: string
+        mobilfunkanbieterAsString:
+          type: string
+        rssi:
+          type: integer
+          format: int32
+        rtt:
+          type: integer
+          format: int32
+        snr:
+          type: integer
+          format: int32
+        erreichtePunkte:
+          type: integer
+          format: int32
+        spielerBenutzername:
+          type: string
+        sid:
+          type: integer
+          format: int32
+    KsidFuerStandort:
+      type: object
+      properties:
+        ksid:
+          type: integer
+          format: int32
+  securitySchemes:
+    spielerTokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    adminTokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    NotFound:
+      description: Ressource nicht gefunden
+      content:
+        application/json:
+          schema:
+            type: string
+            example: "Angeforderte Ressource wurde nicht gefunden."
+    NotAuthenticated:
+      description: Nicht authentifiziert
+      content:
+        application/json:
+          schema:
+            type: string
+            example: "Nicht authentifiziert, bitte melden Sie sich an."

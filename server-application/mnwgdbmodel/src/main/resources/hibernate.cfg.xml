@@ -1,0 +1,45 @@
+<!-- hibernate.cfg.xml -->
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://172.21.0.2:5432/syp-db</property>
+        <property name="hibernate.connection.username">USERNAME</property>
+        <property name="hibernate.connection.password">PASSWORD</property>
+
+        <!-- JDBC connection pool settings -->
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.timeout">300</property>
+        <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
+
+        <!-- Specify dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Drop and re-create the database schema on startup -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- default schema -->
+        <property name="hibernate.default_schema">syp</property>
+
+        <!-- Mention annotated class packages -->
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Administrator"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Kartensegment"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Messung"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Mobilfunkanbieter"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Mobilfunkstandard"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Punktestandspielperiode"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Spieler"/>
+        <mapping class="de.thk.syp.mobilenotworkgame.mnwgdbmodel.entities.Spielperiode"/>
+        <!-- Add more mappings for other entities if needed -->
+
+    </session-factory>
+</hibernate-configuration>

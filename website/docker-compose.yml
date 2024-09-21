@@ -1,0 +1,8 @@
+services: 
+  app: 
+    container_name: mobile-notworkgame-web
+    image: mobile-notworkgame-web
+    build:
+      context: .
+    ports:
+      - 80:80

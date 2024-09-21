@@ -1,0 +1,8 @@
+services: 
+  server-application: 
+    container_name: mobile-notworkgame-srv-app
+    image: mobile-notworkgame-srv-app
+    build:
+      context: .
+    ports:
+      - 8080:8080

@@ -1,0 +1,72 @@
+stages: 
+  - build
+  - test
+  - deploy
+
+website_build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker info
+    - echo $DO_CI_REGISTRY_TOKEN |docker login -u $DO_CI_REGISTRY_TOKEN $DO_CI_REGISTRY --password-stdin
+    - cd website
+    - docker build -t $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_WEB:latest .
+    - docker push $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_WEB:latest
+  only:
+    changes:
+      - "website/**/*"
+
+website_deploy: 
+  image: alpine:latest
+  stage: deploy
+  services:
+    - docker:dind
+  script:
+    - chmod og= $ID_CHARACTERORDER
+    - apk update && apk add openssh-client
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "echo $DO_CI_REGISTRY_TOKEN |docker login -u $DO_CI_REGISTRY_TOKEN $DO_CI_REGISTRY --password-stdin"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker pull $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_WEB:latest"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker container rm -f $IMAGE_NAME_WEB || true"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker run -d --restart unless-stopped -p 80:80 --name $IMAGE_NAME_WEB $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_WEB:latest"
+  only:
+    refs: 
+      - main
+    changes:
+      - "website/**/*"
+
+srv_app_build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker info
+    - echo $DO_CI_REGISTRY_TOKEN |docker login -u $DO_CI_REGISTRY_TOKEN $DO_CI_REGISTRY --password-stdin
+    - cd server-application
+    - docker build -t $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_SRV_APP:latest .
+    - docker push $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_SRV_APP:latest
+  only:
+    changes:
+      - "server-application/**/*"
+
+srv_app_deploy: 
+  image: alpine:latest
+  stage: deploy
+  services:
+    - docker:dind
+  script:
+    - chmod og= $ID_CHARACTERORDER
+    - apk update && apk add openssh-client
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "echo $DO_CI_REGISTRY_TOKEN |docker login -u $DO_CI_REGISTRY_TOKEN $DO_CI_REGISTRY --password-stdin"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker pull $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_SRV_APP:latest"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker container rm -f $IMAGE_NAME_SRV_APP || true"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker run -d --restart unless-stopped -p 8080:8080 --name $IMAGE_NAME_SRV_APP $DO_CI_REGISTRY_IMAGE/$IMAGE_NAME_SRV_APP:latest"
+    - ssh -i $ID_CHARACTERORDER -p $SSH_REMOTE_HOST_PORT -o StrictHostKeyChecking=no $SSH_REMOTE_HOST_USER@$SSH_REMOTE_HOST "docker network connect postgres_default $IMAGE_NAME_SRV_APP"
+
+  only:
+    refs: 
+      - main
+    changes:
+      - "server-application/**/*"

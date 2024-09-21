@@ -1,0 +1,9 @@
+.DS_Store
+MonileNotWorkGame/.idea/vcs.xml
+.vscode
+.idea
+*/.idea/*
+server-application/.idea/misc.xml
+server-application/.idea/workspace.xml
+server-application/.idea/*.xml
+server-application/*/target

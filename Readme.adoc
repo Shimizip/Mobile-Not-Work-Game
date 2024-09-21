@@ -1,0 +1,272 @@
+ifndef::imagesdir[]
+:imagesdir: ./images
+endif::[]
+
+= Mobile NotWorkGame
+
+== Status des Projekts
+**Hinweis:** Dieses Projekt wurde im Rahmen des Moduls "Systementwurfspraktikum (SYP)" an der TH Köln von Studenten entwickelt. Es handelt sich um ein zeitlich beschränktes Projekt, das primär zu Bildungs- und Demonstrationszwecken dient. Das "Mobile NotWork Game" ist kein fertiges Produkt und sollte nicht als solches betrachtet werden. Die Autoren sind stolz auf das erreichte Ergebnis im gegebenen Zeitraum und teilen ihre Arbeit zur öffentlichen Ansicht und als Anschauungsmaterial. Wir weisen darauf hin, dass das System möglicherweise nicht stabil läuft. 
+Ein konkreter Fall ist, dass dadurch, dass das HexGrid auf Basis eines geographischen Referenzpunkts berechnet wird, die Berechnung von diesem bei zunehmender Entfernung ungenauer wird.
+
+== Einführung
+Im Rahmen des Moduls "Systementwurfspraktikum (SYP)" an der TH Köln wurde das "Mobile NotWork Game" entwickelt. Dieses Spiel zielt darauf ab, Gebiete mit eingeschränkter Mobilfunkversorgung in Deutschland zu identifizieren und durch diese Entdeckungen Punkte zu sammeln. Es handelt sich um eine spielerische Methode, eine aktuelle Netzabdeckungskarte Deutschlands zu erstellen und fortlaufend zu aktualisieren.
+
+.Überblick aller Messungen im Raum Köln im Admin Webinterface
+[[fig:adminui_overview]]
+image::adminui_overview.png[width=70%]
+
+
+
+== Spielprinzip
+Innerhalb einer zweiwöchigen Spielperiode suchen Spieler nach Bereichen schlechter Netzabdeckung, die als Hexagone auf einer Karte dargestellt werden. Punkte werden basierend auf dem Mobilfunkstandard und der Signalgüte vergeben, mit höheren Punkten für schlechtere Verbindungen. Ein Scoreboard zeigt die Rangliste der Spieler, und am Ende jeder Periode wird ein Sieger gekürt.
+
+== Tech-Stack
+* **Plattform**: Android, Webinterface mit React
+* **Architektur**: Geschlossene Drei-Schichten-Architektur mit REST-API
+* **Technologien**:
+** **Frontend**: Native Android (Java), React/Typescript für das Webinterface (Kartenansicht + Admin Webinterface) inkl. LeafletJS für das Kartenoverlay (Hexagone)
+** **Backend**: Java, Spring Framework
+** **Datenbank**: PostgreSQL
+* **Infrastruktur**: Docker-Container für Webinterface, Spring Boot Serverapplikation inkl. REST-Schnittstelle und Datenbank
+* **Datenzwischenspeicherung**: Room Persistence Library für Offline-Datenhaltung
+* **CI/CD**: GitLab CI/CD mit Maven für Java-Artefakte und yarn für die Website-Komponente
+
+== Installation
+Für das Projekt `Mobile NotWork Game` wurden mehrere Komponenten entwickelt, die allesamt in einem git Monorepo verwaltet werden. Dieses muss zunächst geklont werden:
+
+[source, bash]
+----
+git clone ssh://git@gitlab.nt.fh-koeln.de:10022/syp23/team02.git
+----
+
+Dieses weißt die folgende Struktur auf: 
+[source, zsh]
+----
+.
+├── android_app
+│   └── MobileNotWorkGame
+├── datenbank
+│   ├── pgadmin
+│   └── postgres
+├── scripts
+├── server-application
+│   ├── datenhaltung
+│   ├── datenhaltungapi
+│   ├── fachlogik
+│   ├── fachlogikapi
+│   ├── mnwgdbmodel
+│   └── restapi
+└── website
+    ├── node_modules
+    ├── public
+    └── src
+----
+
+=== Datenbank
+Als Datenbank wird PostgreSQL verwendet, sie wird mittels Docker deployed. Folgende Schritte müssen ausgeführt werden, um Postgres zu starten. 
+
+[source, bash]
+----
+#(Docker muss installiert sein)
+
+cd ./datenbank/postgres
+
+docker compose up -d
+
+----
+Unter `./datenbank/pgadmin`liegt eine vorkonfigurierte pgAdmin Compose Datei, die zur Verwaltung der Datenbank verwendet werden kann. 
+
+Die genau Konfiguration von Postgres kann der `docker-compose.yml` entnommen und bei Bedarf angepasst werden. 
+
+Anschließend muss die Datenbank noch mit dem entsprechenden Schema und initialen Datensätzen befüllt werden:
+
+[source, bash]
+----
+#(PostgreSQL und openssl müssen installiert sein)
+
+# wieder in das Root des Repos bewegen
+cd ../../
+
+./scripts/dbsetup.sh
+----
+
+=== Server-Application
+Die server-application umfasst die Komponenten `datenhaltung`, `datenhaltungapi`, `fachlogik`, `fachlogikapi`, `mnwgdbmodel` und die `restapi`. 
+
+Sie wird mittels Gitlab CI/CD automatisch gebaut und deployt und auf dem Zielserver zum aktuell Stand des `main` Branches aktuell gehalten. Hierbei kommt ebenfalls Docker zum Einsatz. 
+
+==== Build über Gitlab CI/CD
+Das Installationsziel lässt sich in Gitlab unter `Settings` - `CI/CD` - `Variables` konfigurieren. 
+[source, config]
+----
+SSH_REMOTE_HOST: XXX.XXX.XXX.XXX
+SSH_REMOTE_HOST_PORT: XXXX
+SSH_REMOTE_HOST_USER: XX
+ID_CHARACTERORDER: PRIVATE-SSH-KEY
+----
+
+Zum Ausführen ist insbesondere das restapi Artefakt relevant, da es sich dabei um das Spring Boot "FAT Jar" handelt. 
+
+==== Lokaler Build über Maven
+
+Die `server-application` lässt sich mit folgenden Schritten auch lokal Starten:
+[source, bash]
+----
+git clone ssh://git@gitlab.nt.fh-koeln.de:10022/syp23/team02.git
+
+cd ./scripts && ./setLocalDev.sh
+
+cd ../server-application
+
+mvn clean install
+
+java -jar restapi/target/restapi-1.0-SNAPSHOT.jar
+----
+
+Die REST-API des Mobile NotWork Games steht damit unter Port `8080` zur Verfügung. 
+
+=== Webinterface
+Das Webinterface wird ebenfalls mittels Gitlab CI/CD automatisch gebaut und auf den  Zielserver zum aktuell Stand des `main` Branches deployt und aktuell gehalten. 
+
+Das Installationsziel lässt sich in Gitlab unter `Settings` - `CI/CD` - `Variables` konfigurieren. 
+[source, config]
+----
+SSH_REMOTE_HOST: XXX.XXX.XXX.XXX
+SSH_REMOTE_HOST_PORT: XXXX
+SSH_REMOTE_HOST_USER: XXX
+ID_CHARACTERORDER: PRIVATE-SSH-KEY
+----
+
+Der deployte Docker Container läuft auf Port 80. 
+
+Die React Anwendung wird mittels http://yarnpkg.com[Yarn] verwaltet und kann dadurch bequem lokal gestartet werden. 
+
+[source,bash]
+----
+git clone ssh://git@gitlab.nt.fh-koeln.de:10022/syp23/team02.git
+
+cd ./website
+
+yarn install #Installiert dependencies aus package.json
+
+yarn start #Startet die Anwendung auf Port 3000
+
+#######
+# Alternativ kann die Website auch mittels Docker gestartet werden.
+# Dabei handelt es sich dann um das optimierte Produktiv Image,
+# welches Ansonsten auch durch CI/CD gebaut wird.  
+docker compose build
+
+docker compose up -d #Startet die Anwendung auf Port 80
+----
+
+Sollte eine lokale Installation gewünscht sein, ist https://yarnpkg.com/getting-started/install[hier] eine Installationsanleitung für yarn  zu finden.
+
+Node.js kann https://nodejs.org/en[hier] bezogen werden.
+
+=== Android App 
+Die Android App des Mobile NotWorkGames wird mittels Android Studio entwickelt und gebaut. Die lokale Konfiguration erfolgt durch Gradle. 
+
+Alternativ zum Bauen in Android Studio kann die .apk-Datei auch direkt mit gradle gebaut werden:
+Auf Unix-basierten Systemen (Linux, macOS):
+[source, bash]
+----
+cd android_app/MobileNotWorkGame/
+./gradlew assembleDebug
+----
+Auf Windows:
+[source, bash]
+----
+dir \android_app\MobileNotWorkGame\
+gradlew.bat assembleDebug
+----
+Die generierte .apk-Datei befindet sich dann im Unterverzeichnis `app/build/outputs/apk/debug/`.
+Anschließend muss diese auf ein aktuelles Android-Gerät kopiert und dort über die Installationsroutine installiert werden.
+
+== Benutzung
+In den folgenden Abschnitt wird kurz die Benutzung der App vorgestellt.
+
+=== Spieler Login
+Beim Start der App wird versucht den Spieler automatisch einzuloggen, der Login erfolgt auf Basis der Geräte-ID.
+
+[cols="a,a", frame=none, grid=none]
+|===
+|
+.Spieler Login nicht erfolgreich
+[[fig:spieler-login-error]]
+image::Spieler_Login.png[width=70%]
+
+|
+.Spieler Login erfolgreich
+[[fig:spieler-login-success]]
+image::Kartenansicht.png[width=70%]
+
+|===
+
+=== Kartenansicht
+Sobald der Spieler eingeloggt ist kann er auf die Kartenansich zugreifen. Dort werden ihm seine eigenen Messungen angezeigt und ihm stehen diverse Filtermöglichkeiten über einen Button mit Dropdown Menu zur verfügung. Je heller ein Hexagon ist, desto schlechter ist die Signalqualität. Die Farben der Hexagone geben die unterschiedlichen Mobilfunkstandards an (rot => Kein Netz, orage => GPRS, gelb => 2G, grün => 4G, türkis => 5G). Ein kleines Männchen zeigt den aktuellen Standort den aktuellen Standort des Spielers auf der Karte an.
+
+[cols="a,a,a,a", frame=none, grid=none]
+|===
+|
+.Kartenansicht Filter Button
+[[fig:Kartenansicht_Filter_Button]]
+image::Kartenansicht_Filter_1.png[width=70%]
+
+|
+.Kartenansicht Filter Auswahl
+[[fig:Kartenansicht_Filter_auswahl]]
+image::Kartenansicht_Filter_2.png[width=70%]
+
+|
+.Kartenansicht Filter nach Mobilfunkstandard
+[[fig:Kartenansicht_Filter_Mobilfunkstandard]]
+image::Kartenansicht_Filter_2_msid_1.png[width=70%]
+
+|
+.Kartenansicht Filter nach ausgewählten Mobilfunkstandard
+[[fig:Kartenansicht_Filter_Mobilfunkstandard_auswahl]]
+image::Kartenansicht_Filter_2_msid_2.png[width=70%]
+
+|===
+
+Durch tippen auf eines der Hexagone werden die Daten der dort hinterlegten Messung dargestellt.
+
+.Messdaten in der Kartenansicht ansehen
+[[fig:Kartenansicht_Messung_Ansehen]]
+image::Kartenansicht_messung_ansehen.jpg[width=35%]
+
+
+
+=== Messungen
+Nach erfolgreichem Einloggen werden im Hintergrund automatisch Messungen im gesetzten Polling Intervall durchgeführt, das sich über die Einstellungen ändern lässt. Ist der Spieler über WLAN verbunden wird dies durch ein Toast Dargestellt, anderenfalls werden die erreichten Punkte dargestellt.
+
+[cols="a,a", frame=none, grid=none]
+|===
+|
+.Messung in WLAN
+[[fig:Messung_WLAN]]
+image::MessungErfasst_Wlan.jpg[width=70%]
+
+|
+.Erreichte Punktzahl
+[[fig:Messung_Punkte]]
+image::MessungErfasst.jpg[width=70%]
+
+|===
+
+=== Sidebar
+Über die Sidebar, welche durch drücken der drei Striche in der oberen Linken Ecke erreicht werden kann, sind die Funktionen `Kartenansicht`, `Scoreboard`, `TopTen` sowie die `Einstellungen` erreichbar.
+
+.Sidebar
+[[fig:Sidebar]]
+image::Sidebar_Uebersicht.png[width=33%]
+
+
+
+== Beitragende
+Szymon Banasiak +
+Lars Eric Noll +
+David Armata +
+Leon Braungardt
+

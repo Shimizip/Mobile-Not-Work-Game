@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="-16dp">
+
+        <TextView
+            android:id="@+id/UUIDTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="UUID"
+            android:layout_marginTop="30dp"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/MobilfunkanbieterTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/UUIDTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="Mobilfunkanbieter"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/MobilfunkStandardTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/MobilfunkanbieterTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="Mobilfunkstandard"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/SNRTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/MobilfunkStandardTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="SNR"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/RSSITextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SNRTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="RSSI"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/RTTTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/RSSITextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="RTT"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/latTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/RTTTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="lat"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/lonTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/latTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="lon"
+            android:inputType="text" />
+        <TextView
+            android:id="@+id/kartenSegmentTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lonTextView"
+            android:layout_marginTop="40dp"
+            android:textSize="24sp"
+            android:hint="Kartensegment"
+            android:inputType="text" />
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

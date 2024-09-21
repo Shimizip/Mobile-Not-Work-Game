@@ -1,0 +1,42 @@
+= pgAdmin Setup
+
+WARNING: Docker muss installiert sein. Eine Anleitung für die verschiedenen Betriebssystem findet man https://docs.docker.com/engine/install/[hier].
+
+WARNING: pgAdmin ist ausschließlich für den Betrieb auf dem eigenen Rechner (localhost) konfiguriert.
+
+== Starten von pgAdmin
+Der folgende Befehl muss im Verzeichnis von pgAdmin ausgeführt werden und startet den Container wie in `docker-compose.yml` spezifiziert. 
+
+[source,bash]
+----
+docker compose up -d
+----
+
+==  Datenbankzugriff
+Die Weboberfläche von pgAdmin sollte jetzt unter http://localhost:80 erreichbar sein. 
+
+Auf der linken Seite der Website sollte ein Baummenü mit der Option `Server` sichtbar sein. Darauf klicken und die DB auswählen, dann sollte sich ein Fenster zur Passwort-Eingabe öffnen. Dieses kann https://gitlab.nt.fh-koeln.de/gitlab/syp23/team02/-/issues/35[hier] gefunden werden. Die restliche Konfiguration wird durch die `pgadmin-syp-config.yml` in `./db-server-conf/` übergeben. 
+
+== Stoppen von pgAdmin
+Der folgende Befehl muss im Verzeichnis von pgAdmin ausgeführt werden und räumt den Container ab. Die Konfiguration bleibt im docker volume `pgadmin_syp_data` erhalten.
+
+[source,bash]
+----
+docker compose down
+----
+
+== Entfernen des Docker Volumes (Optional)
+Sollte pgAdmin nicht mehr benötigt werden, oder eine frische Installation gewünscht sein, kann das Volume mit den Konfigurationsdaten wie folgt entfernt werden. 
+
+[source,bash]
+----
+docker volume rm pgadmin_syp_data
+----
+
+== Entfernen des Docker Images (Optional)
+Sollte pgAdmin nicht mehr benötigt werden, kann das Image aus dem der Container gestartet wurde wie folgt gelöscht werden.  
+
+[source,bash]
+----
+docker rmi dpage/pgadmin4
+----
